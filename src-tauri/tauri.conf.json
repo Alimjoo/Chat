@@ -8,7 +8,7 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "ChatGPT Next Web",
+    "productName": "Piyazon Chat",
     "version": "2.9.3"
   },
   "tauri": {
@@ -98,7 +98,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "ChatGPT Next Web",
+        "title": "Piyazon Chat",
         "width": 960,
         "hiddenTitle": true,
         "titleBarStyle": "Overlay"
