@@ -29,7 +29,7 @@ app.post('/updateHello', (req, res) => {
 
       // Update the value associated with the provided name
       if (jsonData[name]){
-        jsonData[name] = jsonData[name] - newValue;
+        jsonData[name] = jsonData[name] - Math.abs(newValue);
 
         fs.writeFile('.subs.json', JSON.stringify(jsonData, null, 2), (err) => {
           if (err) {
