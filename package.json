@@ -3,9 +3,12 @@
   "private": false,
   "license": "mit",
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"yarn run devv\" \"yarn run server\"",
+    "devv": "next dev",
+    "server": "node server.js",
     "build": "cross-env BUILD_MODE=standalone next build",
-    "start": "next start --port 80",
+    "startt": "next start --port 80",
+    "start": "concurrently \"yarn run startt\" \"yarn run server\"",
     "lint": "next lint",
     "export": "cross-env BUILD_MODE=export BUILD_APP=1 next build",
     "export:dev": "cross-env BUILD_MODE=export BUILD_APP=1 next dev",
@@ -20,13 +23,17 @@
     "@hello-pangea/dnd": "^16.3.0",
     "@svgr/webpack": "^6.5.1",
     "@vercel/analytics": "^0.1.11",
+    "concurrently": "^8.2.1",
+    "cors": "^2.8.5",
     "emoji-picker-react": "^4.4.7",
+    "express": "^4.18.2",
     "fuse.js": "^6.6.2",
     "html-to-image": "^1.11.11",
     "mermaid": "^10.2.3",
     "nanoid": "^4.0.2",
     "next": "^13.4.9",
     "node-fetch": "^3.3.1",
+    "nodemon": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-markdown": "^8.0.7",
@@ -61,5 +68,10 @@
   },
   "resolutions": {
     "lint-staged/yaml": "^2.2.2"
+  },
+  "browser": {
+    "fs": false,
+    "path": false,
+    "os": false
   }
 }

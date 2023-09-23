@@ -3,6 +3,8 @@ import {
   DEFAULT_MODELS,
   OpenaiPath,
   REQUEST_TIMEOUT_MS,
+  ACCESS_CODE_PREFIX,
+  apiUrl,
 } from "@/app/constant";
 import { useAccessStore, useAppConfig, useChatStore } from "@/app/store";
 
@@ -14,6 +16,12 @@ import {
 } from "@fortaine/fetch-event-source";
 import { prettyObject } from "@/app/utils/format";
 import { getClientConfig } from "@/app/config/client";
+import { auth } from "@/app/api/auth";
+import { getServerSideConfig } from "@/app/config/server";
+
+import * as fs from "fs";
+import { stringify } from "querystring";
+import { NextRequest } from "next/server";
 
 export interface OpenAIListModelResponse {
   object: string;
@@ -105,7 +113,7 @@ export class ChatGPTApi implements LLMApi {
         };
 
         controller.signal.onabort = finish;
-
+        var i = 0;
         fetchEventSource(chatPath, {
           ...chatPayload,
           async onopen(res) {
@@ -149,12 +157,15 @@ export class ChatGPTApi implements LLMApi {
             }
           },
           onmessage(msg) {
+            // console.log(i);
+            i++;
             if (msg.data === "[DONE]" || finished) {
               return finish();
             }
             const text = msg.data;
             try {
               const json = JSON.parse(text);
+              // console.log("[fsfsjifjsdifjslfjl", text);
               const delta = json.choices[0].delta.content;
               if (delta) {
                 responseText += delta;
@@ -166,6 +177,40 @@ export class ChatGPTApi implements LLMApi {
           },
           onclose() {
             finish();
+            console.log(i);
+            async function updateHelloValue(name: string, newValue: number) {
+              const apiUrll = apiUrl + `updateHello`;
+
+              try {
+                const response = await fetch(apiUrll, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ name, newValue }), // Include both name and newValue in the request body
+                });
+
+                if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                // console.log(result.message); // This will print the server response message
+              } catch (error) {
+                console.error("Error:", error);
+              }
+            }
+            let a = getHeaders();
+            const b = a["Authorization"];
+            const token = b
+              .trim()
+              .replaceAll("Bearer ", "")
+              .trim()
+              .slice(ACCESS_CODE_PREFIX.length);
+
+            // console.log(token);
+            // Usage: Call the updateHelloValue function with the name and new value you want to set
+            updateHelloValue(token, i); // Replace "Hello" with the desired key (name) and i with the new value
           },
           onerror(e) {
             options.onError?.(e);
