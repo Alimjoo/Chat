@@ -28,17 +28,20 @@ app.post('/updateHello', (req, res) => {
       const jsonData = JSON.parse(data);
 
       // Update the value associated with the provided name
-      jsonData[name] = jsonData[name] - newValue;
+      if (jsonData[name]){
+        jsonData[name] = jsonData[name] - newValue;
 
-      fs.writeFile('.subs.json', JSON.stringify(jsonData, null, 2), (err) => {
-        if (err) {
-          console.error('Error writing to file:', err);
-          return res.status(500).json({ error: 'Unable to write to file.' });
-        }
-
-        // console.log(`"${name}" value updated to ${newValue}`);
-        // res.status(200).json({ message: `"${name}" value updated.` });
-      });
+        fs.writeFile('.subs.json', JSON.stringify(jsonData, null, 2), (err) => {
+          if (err) {
+            console.error('Error writing to file:', err);
+            return res.status(500).json({ error: 'Unable to write to file.' });
+          }
+  
+          // console.log(`"${name}" value updated to ${newValue}`);
+          // res.status(200).json({ message: `"${name}" value updated.` });
+        });
+      }
+      
     } catch (error) {
       console.error('Error parsing JSON:', error);
       return res.status(500).json({ error: 'Unable to parse JSON data.' });
