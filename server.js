@@ -76,7 +76,7 @@ app.get('/getMessage/:name', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 300;
+const PORT = process.env.PORT || 299;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
