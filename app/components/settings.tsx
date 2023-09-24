@@ -40,7 +40,7 @@ import Locale, {
 } from "../locales";
 import { copyToClipboard } from "../utils";
 import Link from "next/link";
-import { Path, RELEASE_URL, UPDATE_URL } from "../constant";
+import { Path, RELEASE_URL, UPDATE_URL, ACCESS_CODE_PREFIX } from "../constant";
 import { Prompt, SearchService, usePromptStore } from "../store/prompt";
 import { ErrorBoundary } from "./error";
 import { InputRange } from "./input-range";
@@ -49,6 +49,9 @@ import { Avatar, AvatarPicker } from "./emoji";
 import { getClientConfig } from "../config/client";
 import { useSyncStore } from "../store/sync";
 import { nanoid } from "nanoid";
+
+import { getHeaders } from "../client/api";
+import { fetchMessage } from "../api/auth";
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
   const promptStore = usePromptStore();
@@ -387,6 +390,7 @@ export function Settings() {
 
   const clientConfig = useMemo(() => getClientConfig(), []);
   const showAccessCode = enabledAccessControl && !clientConfig?.isApp;
+  const [subtitle, setSubtitle] = useState("[?]");
 
   return (
     <ErrorBoundary>
@@ -679,31 +683,35 @@ export function Settings() {
             </>
           ) : null}
 
-          {/* {!accessStore.hideBalanceQuery ? (
-            <ListItem
-              title={Locale.Settings.Usage.Title}
-              subTitle={
-                showUsage
-                  ? loadingUsage
-                    ? Locale.Settings.Usage.IsChecking
-                    : Locale.Settings.Usage.SubTitle(
-                        usage?.used ?? "[?]",
-                        usage?.subscription ?? "[?]",
-                      )
-                  : Locale.Settings.Usage.NoAccess
-              }
-            >
+          {!accessStore.hideBalanceQuery ? (
+            <ListItem title={"剩余字数"} subTitle={"还剩: " + subtitle}>
               {!showUsage || loadingUsage ? (
                 <div />
               ) : (
                 <IconButton
                   icon={<ResetIcon></ResetIcon>}
-                  text={Locale.Settings.Usage.Check}
-                  onClick={() => checkUsage(true)}
+                  text={"查询剩余"}
+                  onClick={() => {
+                    let a = getHeaders();
+                    const b = a["Authorization"];
+                    const token = b
+                      .trim()
+                      .replaceAll("Bearer ", "")
+                      .trim()
+                      .slice(ACCESS_CODE_PREFIX.length);
+                    fetchMessage(token)
+                      .then((message) => {
+                        setSubtitle(message);
+                      })
+                      .catch((error) => {
+                        console.error("Error:", error);
+                        // Handle the error if needed
+                      });
+                  }}
                 />
               )}
             </ListItem>
-          ) : null} */}
+          ) : null}
 
           {/* <ListItem
             title={Locale.Settings.CustomModel.Title}

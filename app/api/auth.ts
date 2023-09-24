@@ -25,7 +25,7 @@ function parseApiKey(bearToken: string) {
   };
 }
 
-async function fetchMessage(name: string): Promise<string> {
+export async function fetchMessage(name: string): Promise<string> {
   const apiUrll = apiUrl + `getMessage/${name}`;
 
   try {
