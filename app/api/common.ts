@@ -10,16 +10,6 @@ const DISABLE_GPT4 = !!process.env.DISABLE_GPT4;
 import { ACCESS_CODE_PREFIX, apiUrl } from "@/app/constant";
 import { EvalSourceMapDevToolPlugin } from "webpack";
 
-function parseApiKey(bearToken: string) {
-  const token = bearToken.trim().replaceAll("Bearer ", "").trim();
-  const isOpenAiKey = !token.startsWith(ACCESS_CODE_PREFIX);
-
-  return {
-    accessCode: isOpenAiKey ? "" : token.slice(ACCESS_CODE_PREFIX.length),
-    apiKey: isOpenAiKey ? token : "",
-  };
-}
-
 async function check_gpt4_name(accessCode: string): Promise<number> {
   const url = apiUrl + `checkName/${accessCode}`;
   try {
@@ -102,7 +92,8 @@ export async function requestOpenai(req: NextRequest, accessCode: string) {
           return NextResponse.json(
             {
               error: true,
-              message: "you are not allowed to use gpt-4 model",
+              message: "无权访问GPT-4, 请联系管理员",
+              contect: "微信:Pistallion",
             },
             {
               status: 403,
