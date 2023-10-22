@@ -3,6 +3,7 @@ import { getServerSideConfig } from "@/app/config/server";
 import { OpenaiPath } from "@/app/constant";
 import { prettyObject } from "@/app/utils/format";
 import { NextRequest, NextResponse } from "next/server";
+import { ACCESS_CODE_PREFIX } from "../../../constant";
 import { auth } from "../../auth";
 import { requestOpenai } from "../../common";
 
@@ -18,6 +19,16 @@ function getModels(remoteModelRes: OpenAIListModelResponse) {
   }
 
   return remoteModelRes;
+}
+
+function parseApiKey(bearToken: string) {
+  const token = bearToken.trim().replaceAll("Bearer ", "").trim();
+  const isOpenAiKey = !token.startsWith(ACCESS_CODE_PREFIX);
+
+  return {
+    accessCode: isOpenAiKey ? "" : token.slice(ACCESS_CODE_PREFIX.length),
+    apiKey: isOpenAiKey ? token : "",
+  };
 }
 
 async function handle(
@@ -44,6 +55,10 @@ async function handle(
       },
     );
   }
+
+  const authToken = req.headers.get("Authorization") ?? "";
+  const { accessCode, apiKey: token } = parseApiKey(authToken);
+
   const authResult = await auth(req);
   if (authResult.error) {
     return NextResponse.json(authResult, {
@@ -52,7 +67,7 @@ async function handle(
   }
 
   try {
-    const response = await requestOpenai(req);
+    const response = await requestOpenai(req, accessCode);
 
     // list models
     if (subpath === OpenaiPath.ListModelPath && response.status === 200) {

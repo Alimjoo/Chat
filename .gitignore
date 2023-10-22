@@ -46,3 +46,5 @@ dev
 *.key.pub
 
 .subs.json
+
+.gpt-4_subs.txt
