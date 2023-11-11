@@ -26,6 +26,7 @@ function parseApiKey(bearToken: string) {
 }
 
 export async function fetchMessage(name: string): Promise<string> {
+  // 弃用, 查看 common.ts里的
   const apiUrll = apiUrl + `getMessage/${name}`;
 
   try {
@@ -52,14 +53,13 @@ export async function auth(req: NextRequest) {
   const { accessCode, apiKey: token } = parseApiKey(authToken);
 
   try {
-    const message = await fetchMessage(accessCode);
-
-    if (Number(message) <= 0) {
-      return {
-        error: true,
-        msg: "字数已用完",
-      };
-    }
+    // const message = await fetchMessage(accessCode);
+    // if (Number(message) <= 0) {
+    //   return {
+    //     error: true,
+    //     msg: "字数已用完",
+    //   };
+    // }
 
     const hashedCode = md5.hash(accessCode ?? "").trim();
 

@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 // Define a POST route to update the "hello" value in the JSON file
 app.post('/updateHello', (req, res) => {
-  const { name, newValue } = req.body; // Extract both name and newValue from the request body
+  const { name, newValue, model } = req.body; // Extract both name and newValue from the request body
 
   if (!name || newValue === undefined) {
     return res.status(400).json({ error: 'Both name and newValue are required.' });
@@ -29,7 +29,12 @@ app.post('/updateHello', (req, res) => {
 
       // Update the value associated with the provided name
       if (jsonData[name]){
-        jsonData[name] = jsonData[name] - Math.abs(newValue);
+        if (model == 'gpt-4'){
+          jsonData[name][1] = jsonData[name][1] - Math.abs(newValue);
+        }else{
+          jsonData[name][0] = jsonData[name][0] - Math.abs(newValue);
+        }
+        
 
         fs.writeFile('.subs.json', JSON.stringify(jsonData, null, 2), (err) => {
           if (err) {
@@ -68,6 +73,7 @@ app.get('/getMessage/:name', (req, res) => {
       // Check if the name exists in the JSON data
       if (jsonData.hasOwnProperty(name)) {
         const message = jsonData[name];
+        // console.log(message);
         res.json({ message });
       } else {
         res.status(404).json({ error: `Name '${name}' not found in JSON data.` });

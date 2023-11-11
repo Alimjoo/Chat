@@ -30,6 +30,39 @@ async function check_gpt4_name(accessCode: string): Promise<number> {
   }
 }
 
+interface MyObject {
+  model: string;
+}
+
+export async function get_remaining_word_count(
+  name: string,
+  model: string,
+): Promise<string> {
+  const apiUrll = apiUrl + `getMessage/${name}`;
+
+  try {
+    const response = await fetch(apiUrll);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const message = data.message;
+
+    if (model == "gpt-4") {
+      return message[1];
+    } else {
+      return message[0];
+    }
+
+    return message;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error; // Rethrow the error to handle it further, if needed
+  }
+}
+
 export async function requestOpenai(req: NextRequest, accessCode: string) {
   const controller = new AbortController();
   const authValue = req.headers.get("Authorization") ?? "";
@@ -78,6 +111,34 @@ export async function requestOpenai(req: NextRequest, accessCode: string) {
     signal: controller.signal,
   };
 
+  // if (!DISABLE_GPT4 && req.body) {
+  //   try {
+  //     const clonedBody = await req.text();
+  //     fetchOptions.body = clonedBody;
+
+  //     const jsonBody = JSON.parse(clonedBody);
+
+  //     if ((jsonBody?.model ?? "").includes("gpt-4")) {
+  //       const a = await check_gpt4_name(accessCode);
+  //       console.log(a);
+  //       if (!a) {
+  //         return NextResponse.json(
+  //           {
+  //             error: true,
+  //             message: "无权访问GPT-4, 请联系管理员",
+  //             contect: "微信:Pistallion",
+  //           },
+  //           {
+  //             status: 403,
+  //           },
+  //         );
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // }
+  let model = "";
   if (!DISABLE_GPT4 && req.body) {
     try {
       const clonedBody = await req.text();
@@ -86,24 +147,27 @@ export async function requestOpenai(req: NextRequest, accessCode: string) {
       const jsonBody = JSON.parse(clonedBody);
 
       if ((jsonBody?.model ?? "").includes("gpt-4")) {
-        const a = await check_gpt4_name(accessCode);
-        console.log(a);
-        if (!a) {
-          return NextResponse.json(
-            {
-              error: true,
-              message: "无权访问GPT-4, 请联系管理员",
-              contect: "微信:Pistallion",
-            },
-            {
-              status: 403,
-            },
-          );
-        }
+        model = "gpt-4";
+      } else {
+        model = "gpt-3.5-turbo";
       }
     } catch (error) {
       console.error("Error:", error);
     }
+  }
+
+  const num = await get_remaining_word_count("alim", model);
+  if (Number(num) <= 0) {
+    return NextResponse.json(
+      {
+        error: true,
+        message: model + " 的字数已用完",
+        contect: "联系 微信:Pistallion, 进行充值",
+      },
+      {
+        status: 403,
+      },
+    );
   }
 
   // #1815 try to refuse gpt4 request

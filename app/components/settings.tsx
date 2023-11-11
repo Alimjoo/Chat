@@ -52,6 +52,7 @@ import { nanoid } from "nanoid";
 
 import { getHeaders } from "../client/api";
 import { fetchMessage } from "../api/auth";
+import { get_remaining_word_count } from "../api/common";
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
   const promptStore = usePromptStore();
@@ -391,6 +392,7 @@ export function Settings() {
   const clientConfig = useMemo(() => getClientConfig(), []);
   const showAccessCode = enabledAccessControl && !clientConfig?.isApp;
   const [subtitle, setSubtitle] = useState("[?]");
+  const [subtitle3, setSubtitle3] = useState("[?]");
 
   return (
     <ErrorBoundary>
@@ -684,7 +686,10 @@ export function Settings() {
           ) : null}
 
           {!accessStore.hideBalanceQuery ? (
-            <ListItem title={"剩余字数"} subTitle={"还剩: " + subtitle}>
+            <ListItem
+              title={"剩余字数"}
+              subTitle={"gpt-4: " + subtitle + ", " + "gpt-3.5: " + subtitle3}
+            >
               {!showUsage || loadingUsage ? (
                 <div />
               ) : (
@@ -699,9 +704,17 @@ export function Settings() {
                       .replaceAll("Bearer ", "")
                       .trim()
                       .slice(ACCESS_CODE_PREFIX.length);
-                    fetchMessage(token)
+                    get_remaining_word_count(token, "gpt-4")
                       .then((message) => {
                         setSubtitle(message);
+                      })
+                      .catch((error) => {
+                        console.error("Error:", error);
+                        // Handle the error if needed
+                      });
+                    get_remaining_word_count(token, "gpt-3.5-turbo")
+                      .then((message) => {
+                        setSubtitle3(message);
                       })
                       .catch((error) => {
                         console.error("Error:", error);

@@ -6,7 +6,12 @@ import {
   ACCESS_CODE_PREFIX,
   apiUrl,
 } from "@/app/constant";
-import { useAccessStore, useAppConfig, useChatStore } from "@/app/store";
+import {
+  ModelConfig,
+  useAccessStore,
+  useAppConfig,
+  useChatStore,
+} from "@/app/store";
 
 import { ChatOptions, getHeaders, LLMApi, LLMModel, LLMUsage } from "../api";
 import Locale from "../../locales";
@@ -178,8 +183,14 @@ export class ChatGPTApi implements LLMApi {
           onclose() {
             finish();
             console.log(i);
-            async function updateHelloValue(name: string, newValue: number) {
+            async function updateHelloValue(
+              name: string,
+              newValue: number,
+              model: string,
+            ) {
               const apiUrll = apiUrl + `updateHello`;
+
+              // console.log(modelConfig.model);
 
               try {
                 const response = await fetch(apiUrll, {
@@ -187,7 +198,7 @@ export class ChatGPTApi implements LLMApi {
                   headers: {
                     "Content-Type": "application/json",
                   },
-                  body: JSON.stringify({ name, newValue }), // Include both name and newValue in the request body
+                  body: JSON.stringify({ name, newValue, model }), // Include both name and newValue in the request body
                 });
 
                 if (!response.ok) {
@@ -210,7 +221,7 @@ export class ChatGPTApi implements LLMApi {
 
             // console.log(token);
             // Usage: Call the updateHelloValue function with the name and new value you want to set
-            updateHelloValue(token, i); // Replace "Hello" with the desired key (name) and i with the new value
+            updateHelloValue(token, i, modelConfig.model); // Replace "Hello" with the desired key (name) and i with the new value
           },
           onerror(e) {
             options.onError?.(e);

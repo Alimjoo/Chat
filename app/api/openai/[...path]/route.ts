@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ACCESS_CODE_PREFIX } from "../../../constant";
 import { auth } from "../../auth";
 import { requestOpenai } from "../../common";
+import { resolve } from "path";
 
 const ALLOWD_PATH = new Set(Object.values(OpenaiPath));
 
@@ -58,6 +59,11 @@ async function handle(
 
   const authToken = req.headers.get("Authorization") ?? "";
   const { accessCode, apiKey: token } = parseApiKey(authToken);
+
+  interface MyObject {
+    model: string;
+  }
+  let Model_config: MyObject = { model: "" };
 
   const authResult = await auth(req);
   if (authResult.error) {

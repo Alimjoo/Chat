@@ -47,9 +47,9 @@ export const LAST_INPUT_KEY = "last-input";
 
 export const REQUEST_TIMEOUT_MS = 60000;
 
-// export const apiUrl = "http://localhost:300/";
+export const apiUrl = "http://localhost:300/";
 
-export const apiUrl = "https://chat.piyazon.top:300/";
+// export const apiUrl = "https://chat.piyazon.top:300/";
 
 export const EXPORT_MESSAGE_CLASS_NAME = "export-markdown";
 
