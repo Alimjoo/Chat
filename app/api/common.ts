@@ -10,25 +10,25 @@ const DISABLE_GPT4 = !!process.env.DISABLE_GPT4;
 import { ACCESS_CODE_PREFIX, apiUrl } from "@/app/constant";
 import { EvalSourceMapDevToolPlugin } from "webpack";
 
-async function check_gpt4_name(accessCode: string): Promise<number> {
-  const url = apiUrl + `checkName/${accessCode}`;
-  try {
-    const response = await fetch(url);
+// async function check_gpt4_name(accessCode: string): Promise<number> {
+//   const url = apiUrl + `checkName/${accessCode}`;
+//   try {
+//     const response = await fetch(url);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    const data = await response.json();
-    if (data == "1") {
-      return 1;
-    } else {
-      return 0;
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    return 0;
-  }
-}
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! Status: ${response.status}`);
+//     }
+//     const data = await response.json();
+//     if (data == "1") {
+//       return 1;
+//     } else {
+//       return 0;
+//     }
+//   } catch (error) {
+//     console.error("Error:", error);
+//     return 0;
+//   }
+// }
 
 interface MyObject {
   model: string;

@@ -85,35 +85,35 @@ app.get('/getMessage/:name', (req, res) => {
   });
 });
 
-// Endpoint to check if a name exists
-app.get('/checkName/:name', (req, res) => {
-  const name = req.params.name;
-  const filename = '.gpt-4_subs.txt';
+// // Endpoint to check if a name exists
+// app.get('/checkName/:name', (req, res) => {
+//   const name = req.params.name;
+//   const filename = '.gpt-4_subs.txt';
 
-  fs.readFile(filename, 'utf8', (err, data) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send('Error reading file');
-    }
-    try {
-      const names = data.split('\n');
-      const nameExists = names.includes(name);
-      console.log(names);
-      console.log(nameExists);
-      console.log(name);
+//   fs.readFile(filename, 'utf8', (err, data) => {
+//     if (err) {
+//       console.error(err);
+//       return res.status(500).send('Error reading file');
+//     }
+//     try {
+//       const names = data.split('\n');
+//       const nameExists = names.includes(name);
+//       console.log(names);
+//       console.log(nameExists);
+//       console.log(name);
   
-      if (nameExists) {
-        res.send('1'); // Name exists
-      } else {
-        res.send('0'); // Name does not exist
-      }
+//       if (nameExists) {
+//         res.send('1'); // Name exists
+//       } else {
+//         res.send('0'); // Name does not exist
+//       }
 
-    } catch (error) {
-      console.error('Error parsing JSON:', error);
-      res.status(500).json({ error: 'Unable to parse JSON data.' });
-    }
-  });
-});
+//     } catch (error) {
+//       console.error('Error parsing JSON:', error);
+//       res.status(500).json({ error: 'Unable to parse JSON data.' });
+//     }
+//   });
+// });
 
 
 // const PORT = process.env.PORT || 300;
