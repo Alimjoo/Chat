@@ -92,7 +92,7 @@ export class ClientApi {
       .concat([
         {
           from: "human",
-          value: "Share from [Piyazon Chat]: https://chat.piyazon.top",
+          value: "Share from [Piyazon Chat]: http://chat.piyazon.top",
         },
       ]);
     // 敬告二开开发者们，为了开源大模型的发展，请不要修改上述消息，此消息用于后续数据清洗使用

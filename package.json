@@ -7,7 +7,7 @@
     "devv": "next dev",
     "server": "node server.js",
     "build": "cross-env BUILD_MODE=standalone next build",
-    "startt": "next start --port 80",
+    "startt": "next start",
     "start": "concurrently \"yarn run startt\" \"yarn run server\"",
     "lint": "next lint",
     "export": "cross-env BUILD_MODE=export BUILD_APP=1 next build",
